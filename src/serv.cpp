@@ -151,10 +151,11 @@ SSDBServer::SSDBServer(SSDB *ssdb, SSDB *meta, const Config &conf, NetworkServer
 	net->data = this;
 	this->reg_procs(net);
 
-	int sync_speed = conf.get_num("replication.sync_speed");
+	this->cfg = &conf;
+	this->sync_speed = conf.get_num("replication.sync_speed");
 
 	backend_dump = new BackendDump(this->ssdb);
-	backend_sync = new BackendSync(this->ssdb, sync_speed);
+	backend_sync = new BackendSync(this->ssdb, this->sync_speed);
 	expiration = new ExpirationHandler(this->ssdb);
 	
 	{ // slaves

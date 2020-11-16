@@ -25,6 +25,9 @@ private:
 	std::string kv_range_s;
 	std::string kv_range_e;
 	
+	const Config *cfg;
+	int sync_speed;
+	
 	SSDB *meta;
 
 public:

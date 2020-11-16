@@ -40,7 +40,6 @@ private:
 
 	std::string status_key();
 	void load_status();
-	void save_status();
 
 	volatile bool thread_quit;
 	pthread_t run_thread_tid;
@@ -69,6 +68,7 @@ public:
 	void start();
 	void stop();
 	void reset_last_key();
+	void save_status();
 
 	void set_id(const std::string &id);
 	std::string stats() const;

@@ -49,6 +49,8 @@ echo $resp; // output: 123
 $ wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip
 $ unzip master
 $ cd ssdb-master
+$ #When on CentOS 8 run:
+$ ./build.sh
 $ make
 $ #optional, install ssdb in /usr/local/ssdb
 $ sudo make install

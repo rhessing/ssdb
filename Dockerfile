@@ -1,31 +1,34 @@
-FROM ubuntu
-MAINTAINER wendal "wendal1985@gmail.com"
+FROM debian:stable-slim
+MAINTAINER rhessing
 
-# Set the env variable DEBIAN_FRONTEND to noninteractive
-ENV DEBIAN_FRONTEND noninteractive
+ENV DOWNLOAD_URL="https://github.com/rhessing/ssdb/archive/master.zip"
 
-RUN apt-get update && \
-  apt-get install -y python2.7 && \
-  apt-get install -y --force-yes git make gcc g++ autoconf && apt-get clean && \
-  git clone --depth 1 https://github.com/ideawu/ssdb.git ssdb && \
-  cd ssdb && make && make install && cp ssdb-server /usr/bin && \
-  apt-get remove -y --force-yes git make gcc g++ autoconf && \
+# Basics
+RUN apt-get -y update && \
+  apt-get install --force-yes -y python unzip wget make autoconf g++ && \
+  wget --no-check-certificate ${DOWNLOAD_URL} && \
+  unzip master && \
+  cd ssdb-master && \
+  make && make install && \
+  mkdir -p /var/lib/ssdb && \
+  ln -fsn /usr/local/ssdb/ssdb-cli /bin/ssdb-cli && \
+  ln -fsn /usr/local/ssdb/ssdb-bench /bin/ssdb-bench && \
+  ln -fsn /usr/local/ssdb/ssdb-dump /bin/ssdb-dump && \
+  ln -fsn /usr/local/ssdb/ssdb-repair /bin/ssdb-repair && \
+  ln -fsn /usr/local/ssdb/leveldb-import /bin/leveldb-import
+
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
+
+# clean up
+RUN cd && rm -rf /ssdb-master /master.zip && \
+  rm -f /usr/local/ssdb/Makefile && \
+  apt-get purge -y unzip wget make autoconf g++ && \
   apt-get autoremove -y && \
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-  cp ssdb.conf /etc && cd .. && yes | rm -r ssdb
-
-RUN mkdir -p /var/lib/ssdb && \
-  sed \
-    -e 's@home.*@home /var/lib@' \
-    -e 's/loglevel.*/loglevel info/' \
-    -e 's@work_dir = .*@work_dir = /var/lib/ssdb@' \
-    -e 's@pidfile = .*@pidfile = /run/ssdb.pid@' \
-    -e 's@level:.*@level: info@' \
-    -e 's@ip:.*@ip: 0.0.0.0@' \
-    -i /etc/ssdb.conf
+  apt-get clean -y
 
 
-ENV TZ Asia/Shanghai
+ENV TZ Europe/Amsterdam
 EXPOSE 8888
 VOLUME /var/lib/ssdb
-ENTRYPOINT /usr/bin/ssdb-server /etc/ssdb.conf
+CMD ["/usr/local/bin/docker-entrypoint.sh"]

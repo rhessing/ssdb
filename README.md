@@ -1,4 +1,4 @@
-# SSDB - A fast NoSQL database for storing big list of data
+# SSDB - A Redis compatible NoSQL database stored on disk
 
 [![Author](https://img.shields.io/badge/author-@ideawu-blue.svg?style=flat)](http://www.ideawu.net/) [![Platform](https://img.shields.io/badge/platform-Linux,%20BSD,%20OS%20X,%20Windows-green.svg?style=flat)](https://github.com/ideawu/ssdb) [![NoSQL](https://img.shields.io/badge/db-NoSQL-pink.svg?tyle=flat)](https://github.com/ideawu/ssdb) [![License](https://img.shields.io/badge/license-New%20BSD-yellow.svg?style=flat)](LICENSE)
 
@@ -11,7 +11,7 @@ SSDB is stable, production-ready and is widely used by many Internet companies i
 
 * LevelDB client-server support, written in C/C++
 * Designed to store collection data
-* Persistent key-value, key-zset, key-map('hashmap') storage
+* Persistent key-value, key-zset, key-map('hashmap'), key-list storage
 * Redis clients are supported
 * Client API supports including C++, PHP, Python, Cpy, Java, nodejs, Ruby, Go([see all](http://ssdb.io/docs/clients.html))
 * Persistent queue service
@@ -35,9 +35,7 @@ echo $resp; // output: 123
 
 ## Who's using SSDB?
 
-![all-ssdb-users](http://ssdb.io/img/ssdb-users/all-ssdb-users.jpg)
-
-[And more...](http://ssdb.io/docs/users.html)
+[SSDB users...](http://ssdb.io/docs/users.html)
 
 
 ## Documentation
@@ -152,7 +150,7 @@ SSDB is licensed under [New BSD License](http://opensource.org/licenses/BSD-3-Cl
 
 ## Authors
 
-@ideawu
+@ideawu(wuzuyang1@gmail.com)
 
 ## Thanks
 

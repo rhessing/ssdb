@@ -190,6 +190,7 @@ int Slave::connect(){
 				}
 			}
 			
+			log_info("call sync140 with last_key=%s", this->last_key);
 			link->send("sync140", str(this->last_seq), this->last_key, type);
 			if(link->flush() == -1){
 				log_error("[%s] network error", this->id_.c_str());

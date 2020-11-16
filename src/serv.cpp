@@ -130,6 +130,9 @@ void SSDBServer::reg_procs(NetworkServer *net){
 	REG_PROC(info, "rt");
 	REG_PROC(version, "r");
 	REG_PROC(dbsize, "rt");
+	REG_PROC(resetcopy, "w");
+	REG_PROC(stopsync, "w");
+	REG_PROC(startsync, "w");
 	// doing compaction in a reader thread, because we have only one
 	// writer thread(for performance reason); we don't want to block writes
 	REG_PROC(compact, "rt");
@@ -217,6 +220,161 @@ SSDBServer::~SSDBServer(){
 	log_debug("SSDBServer finalized");
 }
 
+void SSDBServer::stopsync() {
+	log_info("stopsync called");
+	std::vector<Slave *>::iterator it;
+	for(it = slaves.begin(); it != slaves.end(); it++){
+		Slave *slave = *it;
+		slave->last_seq = 0;
+		slave->last_key = "";
+		slave->save_status();
+		slave->stop();
+		delete slave;
+	}
+	slaves.clear();
+	log_info("stopsync cleared slaves!");
+	delete backend_sync;
+
+	log_info("stopsync deleted backend_sync");
+}
+
+void SSDBServer::startsync() {
+	backend_sync = new BackendSync(this->ssdb, this->sync_speed);
+	log_info("startsync created new backend_sync");
+
+	{ // slaves
+		const Config *repl_conf = this->cfg->get("replication");
+		if(repl_conf != NULL){
+			std::vector<Config *> children = repl_conf->children;
+			for(std::vector<Config *>::iterator it = children.begin(); it != children.end(); it++){
+				Config *c = *it;
+				if(c->key != "slaveof"){
+					continue;
+				}
+				std::string ip = c->get_str("ip");
+				int port = c->get_num("port");
+				if(ip == ""){
+					ip = c->get_str("host");
+				}
+				if(ip == "" || port <= 0 || port > 65535){
+					continue;
+				}
+				bool is_mirror = false;
+				std::string type = c->get_str("type");
+				if(type == "mirror"){
+					is_mirror = true;
+				}else{
+					type = "sync";
+					is_mirror = false;
+				}
+
+				std::string id = c->get_str("id");
+				int recv_timeout = c->get_num("recv_timeout");
+
+				log_info("slaveof: %s:%d, type: %s", ip.c_str(), port, type.c_str());
+				Slave *slave = new Slave(ssdb, meta, ip.c_str(), port, is_mirror);
+				if(!id.empty()){
+					slave->set_id(id);
+				}
+				if(recv_timeout > 0){
+					slave->recv_timeout = recv_timeout;
+				}
+				slave->auth = c->get_str("auth");
+				slave->start();
+				slaves.push_back(slave);
+			}
+		}
+	}
+
+	log_info("startsync started new slaves");
+}
+
+void SSDBServer::resetcopy() {
+	log_info("resetcopy called");
+	std::vector<Slave *>::iterator it;
+	for(it = slaves.begin(); it != slaves.end(); it++){
+		Slave *slave = *it;
+		slave->last_seq = 0;
+		slave->last_key = "";
+		slave->save_status();
+		slave->stop();
+		delete slave;
+	}
+	slaves.clear();
+	log_info("resetcopy cleared slaves!2");
+	delete backend_sync;
+
+	log_info("resetcopy deleted backend_sync");
+	backend_sync = new BackendSync(this->ssdb, this->sync_speed, false, true);
+	log_info("resetcopy created new backend_sync");
+
+	{ // slaves
+		const Config *repl_conf = this->cfg->get("replication");
+		if(repl_conf != NULL){
+			std::vector<Config *> children = repl_conf->children;
+			for(std::vector<Config *>::iterator it = children.begin(); it != children.end(); it++){
+				Config *c = *it;
+				if(c->key != "slaveof"){
+					continue;
+				}
+				std::string ip = c->get_str("ip");
+				int port = c->get_num("port");
+				if(ip == ""){
+					ip = c->get_str("host");
+				}
+				if(ip == "" || port <= 0 || port > 65535){
+					continue;
+				}
+				bool is_mirror = false;
+				std::string type = c->get_str("type");
+				if(type == "mirror"){
+					is_mirror = true;
+				}else{
+					type = "sync";
+					is_mirror = false;
+				}
+
+				std::string id = c->get_str("id");
+				int recv_timeout = c->get_num("recv_timeout");
+
+				log_info("slaveof: %s:%d, type: %s", ip.c_str(), port, type.c_str());
+				Slave *slave = new Slave(ssdb, meta, ip.c_str(), port, is_mirror);
+				if(!id.empty()){
+					slave->set_id(id);
+				}
+				if(recv_timeout > 0){
+					slave->recv_timeout = recv_timeout;
+				}
+				slave->auth = c->get_str("auth");
+				slave->start();
+				slaves.push_back(slave);
+			}
+		}
+	}
+
+	log_info("resetcopy started new slaves");
+}
+
+int proc_startsync(NetworkServer *net, Link *link, const Request &req, Response *resp) {
+	SSDBServer *serv = (SSDBServer *)net->data;
+	serv->startsync();
+	resp->push_back("ok");
+	return 0;
+}
+
+int proc_stopsync(NetworkServer *net, Link *link, const Request &req, Response *resp) {
+	SSDBServer *serv = (SSDBServer *)net->data;
+	serv->stopsync();
+	resp->push_back("ok");
+	return 0;
+}
+int proc_resetcopy(NetworkServer *net, Link *link, const Request &req, Response *resp) {
+	SSDBServer *serv = (SSDBServer *)net->data;
+	serv->resetcopy();
+	resp->push_back("ok");
+	return 0;
+}
+
 int SSDBServer::slaveof(const std::string &id, const std::string &host, int port, const std::string &auth, uint64_t last_seq, const std::string &last_key, bool is_mirror, int recv_timeout){
 	Slave *slave = new Slave(ssdb, meta, host.c_str(), port, is_mirror);
 	if(!id.empty()){
@@ -273,4 +431,5 @@ bool SSDBServer::in_kv_range(const std::string &key){
 	}
 	return true;
 }
+
 

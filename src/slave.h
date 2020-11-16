@@ -68,7 +68,8 @@ public:
 	~Slave();
 	void start();
 	void stop();
-		
+	void reset_last_key();
+
 	void set_id(const std::string &id);
 	std::string stats() const;
 };

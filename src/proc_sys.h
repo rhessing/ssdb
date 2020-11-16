@@ -22,3 +22,7 @@ DEF_PROC(get_key_range);
 DEF_PROC(ignore_key_range);
 DEF_PROC(get_kv_range);
 DEF_PROC(set_kv_range);
+
+DEF_PROC(startsync);
+DEF_PROC(stopsync);
+DEF_PROC(resetcopy);

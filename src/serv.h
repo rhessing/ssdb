@@ -43,6 +43,9 @@ public:
 	int get_kv_range(std::string *s, std::string *e);
 	bool in_kv_range(const std::string &key);
 	bool in_kv_range(const Bytes &key);
+	void stopsync();
+	void startsync();
+	void resetcopy();
 };
 
 #define CHECK_KV_KEY_RANGE(n) do{ \

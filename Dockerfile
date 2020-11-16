@@ -17,9 +17,6 @@ RUN apt-get -y update && \
   ln -fsn /usr/local/ssdb/ssdb-repair /bin/ssdb-repair && \
   ln -fsn /usr/local/ssdb/leveldb-import /bin/leveldb-import
 
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
-
 # clean up
 RUN cd && rm -rf /ssdb-master /master.zip && \
   rm -f /usr/local/ssdb/Makefile && \
@@ -27,8 +24,7 @@ RUN cd && rm -rf /ssdb-master /master.zip && \
   apt-get autoremove -y && \
   apt-get clean -y
 
-
 ENV TZ Europe/Amsterdam
 EXPOSE 8888
 VOLUME /var/lib/ssdb
-CMD ["/usr/local/bin/docker-entrypoint.sh"]
+ENTRYPOINT /usr/bin/ssdb-server /etc/ssdb.conf

@@ -244,10 +244,16 @@ int proc_slaveof(NetworkServer *net, Link *link, const Request &req, Response *r
 	std::string auth;
 	uint64_t last_seq = 0;
 	std::string last_key;
+	bool type = false;
+
 	log_info("start slaveof: %s:%d, type: sync", host.c_str(), port);
-	if(req.size() > 4 && !req[4].empty()){
-		auth = req[4].String();
-		log_info("    auth: ***");
+	log_info("    id: %s", id.c_str());
+
+	if(req.size() > 4 && !req[4].empty() && req[4] == "mirror"){
+		type = true;
+		log_info("    type: mirror");
+	} else {
+		log_info("    type: sync");
 	}
 	if(req.size() > 5 && !req[5].empty()){
 		last_seq = req[5].Uint64();
@@ -257,8 +263,11 @@ int proc_slaveof(NetworkServer *net, Link *link, const Request &req, Response *r
 		last_key = req[6].String();
 		log_info("    last_key: %s", hexmem(last_key.data(), last_key.size()).c_str());
 	}
-	
-	serv->slaveof(id, host, port, auth, last_seq, last_key, false, 0);
+	if(req.size() > 7 && !req[7].empty()){
+		auth = req[7].String();
+		log_info("    auth: ***");
+	}
+	serv->slaveof(id, host, port, auth, last_seq, last_key, type, 0);
 
 	resp->push_back("ok");
 	return 0;

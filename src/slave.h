@@ -25,8 +25,6 @@ private:
 	SSDB *meta;
 	Link *link;
 	std::string master_ip;
-	int master_port;
-	bool is_mirror;
 	char log_type;
 
 	static const int DISCONNECTED = 0;
@@ -63,6 +61,8 @@ public:
 	uint64_t last_seq;
 	std::string last_key;
 	std::string auth;
+	int master_port;
+	bool is_mirror;
 	Slave(SSDB *ssdb, SSDB *meta, const char *ip, int port, bool is_mirror=false);
 	~Slave();
 	void start();

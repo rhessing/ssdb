@@ -9,6 +9,7 @@ RUN apt-get -y update && \
   wget --no-check-certificate ${DOWNLOAD_URL} && \
   unzip master && \
   cd ssdb-master && \
+  ./build.sh && \
   make && make install && \
   mkdir -p /var/lib/ssdb && \
   ln -fsn /usr/local/ssdb/ssdb-cli /bin/ssdb-cli && \

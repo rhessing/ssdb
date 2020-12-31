@@ -388,6 +388,7 @@ int SSDBServer::delslave(const std::string &id) {
 			slave->save_status();
 			slave->delslave();
 			delete slave;
+			slaves.erase(it);
 			log_info("deleted slave: %s", slave->id_.c_str());
 		}
 	}

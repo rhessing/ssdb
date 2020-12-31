@@ -275,9 +275,9 @@ int proc_slaveof(NetworkServer *net, Link *link, const Request &req, Response *r
 
 int proc_delslave(NetworkServer *net, Link *link, const Request &req, Response *resp) {
 	SSDBServer *serv = (SSDBServer *)net->data;
-	CHECK_NUM_PARAMS(2);
+	CHECK_NUM_PARAMS(1);
 
-	std::string id = req[2].String();
+	std::string id = req[1].String();
 
 	serv->delslave(id);
 

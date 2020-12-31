@@ -18,8 +18,6 @@ class Slave{
 private:
 	uint64_t copy_count;
 	uint64_t sync_count;
-		
-	std::string id_;
 
 	SSDB *ssdb;
 	SSDB *meta;
@@ -59,6 +57,7 @@ public:
 	// after this time, the slave will disconnect from master.
 	// in seconds, default 30
 	int recv_timeout;
+	std::string id_;
 	uint64_t last_seq;
 	std::string last_key;
 	std::string auth;
@@ -71,7 +70,6 @@ public:
 	void save_status();
 
 	void set_id(const std::string &id);
-	std::string get_id() const;
 	std::string stats() const;
 };
 

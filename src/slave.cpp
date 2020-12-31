@@ -110,10 +110,6 @@ void Slave::stop(){
 	}
 }
 
-std::string Slave::get_id() const{
-	return this->id_;
-}
-
 void Slave::set_id(const std::string &id){
 	this->id_ = id;
 }

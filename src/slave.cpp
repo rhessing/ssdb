@@ -102,9 +102,9 @@ void Slave::start(){
 }
 
 void Slave::delslave(){
-	slave->status = DISCONNECTED;
-	delete slave->link;
-	slave->link = NULL;
+	this->status = DISCONNECTED;
+	delete this->link;
+	this->link = NULL;
 	stop();
 }
 

@@ -3,7 +3,8 @@ MAINTAINER rhessing
 
 # Basics
 RUN apt-get -y update && \
-  apt-get install --force-yes -y python make autoconf g++ && \
+  apt-get install -y python make autoconf g++ && \
+  ls -al && \
   make && make install && \
   mkdir -p /var/lib/ssdb && \
   ln -fsn /usr/local/ssdb/ssdb-cli /bin/ssdb-cli && \

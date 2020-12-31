@@ -16,6 +16,7 @@ DEF_PROC(compact);
 DEF_PROC(dump);
 DEF_PROC(sync140);
 DEF_PROC(slaveof);
+DEF_PROC(delslave);
 DEF_PROC(clear_binlog);
 
 DEF_PROC(get_key_range);

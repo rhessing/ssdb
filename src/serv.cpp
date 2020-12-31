@@ -127,6 +127,7 @@ void SSDBServer::reg_procs(NetworkServer *net){
 	REG_PROC(dump, "b");
 	REG_PROC(sync140, "b");
 	REG_PROC(slaveof, "w");
+	REG_PROC(delslave, "w");
 	REG_PROC(info, "rt");
 	REG_PROC(version, "r");
 	REG_PROC(dbsize, "rt");
@@ -356,26 +357,6 @@ void SSDBServer::resetcopy() {
 	log_info("resetcopy started new slaves");
 }
 
-int proc_startsync(NetworkServer *net, Link *link, const Request &req, Response *resp) {
-	SSDBServer *serv = (SSDBServer *)net->data;
-	serv->startsync();
-	resp->push_back("ok");
-	return 0;
-}
-
-int proc_stopsync(NetworkServer *net, Link *link, const Request &req, Response *resp) {
-	SSDBServer *serv = (SSDBServer *)net->data;
-	serv->stopsync();
-	resp->push_back("ok");
-	return 0;
-}
-int proc_resetcopy(NetworkServer *net, Link *link, const Request &req, Response *resp) {
-	SSDBServer *serv = (SSDBServer *)net->data;
-	serv->resetcopy();
-	resp->push_back("ok");
-	return 0;
-}
-
 int SSDBServer::slaveof(const std::string &id, const std::string &host, int port, const std::string &auth, uint64_t last_seq, const std::string &last_key, bool is_mirror, int recv_timeout){
 	Slave *slave = new Slave(ssdb, meta, host.c_str(), port, is_mirror);
 	if(!id.empty()){
@@ -389,6 +370,23 @@ int SSDBServer::slaveof(const std::string &id, const std::string &host, int port
 	slave->auth = auth;
 	slave->start();
 	slaves.push_back(slave);
+	return 0;
+}
+
+int SSDBServer::delslave(const std::string &host, int port) {
+	log_info("delslave called");
+	std::vector<Slave *>::iterator it;
+	for(it = slaves.begin(); it != slaves.end(); it++){
+		Slave *slave = *it;
+		if (slave->master_ip == host && slave->master_port == port) {
+			slave->last_seq = 0;
+			slave->last_key = "";
+			slave->save_status();
+			slave->stop();
+			delete slave;
+			log_info("deleted slave: %s:%d", host.c_str(), port);
+		}
+	}
 	return 0;
 }
 

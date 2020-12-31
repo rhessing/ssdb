@@ -380,15 +380,16 @@ int SSDBServer::delslave(const std::string &id) {
 	for(it = slaves.begin(); it != slaves.end(); it++){
 		Slave *slave = *it;
 
-		log_info("iterating slave: %s", slave->id_);
+		log_info("iterating slave: %s", slave->id_.c_str());
 		
 		if (slave->id_ == id.c_str()) {
 			slave->last_seq = 0;
 			slave->last_key = "";
 			slave->save_status();
-			slave->stop();
+			slave->delslave();
+			slaves.erase(slave);
 			delete slave;
-			log_info("deleted slave: %s", slave->id_);
+			log_info("deleted slave: %s", slave->id_.c_str());
 		}
 	}
 	return 0;

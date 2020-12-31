@@ -101,6 +101,13 @@ void Slave::start(){
 	}
 }
 
+void Slave::delslave(){
+	slave->status = DISCONNECTED;
+	delete slave->link;
+	slave->link = NULL;
+	stop();
+}
+
 void Slave::stop(){
 	thread_quit = true;
 	void *tret;

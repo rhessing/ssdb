@@ -66,6 +66,7 @@ public:
 	~Slave();
 	void start();
 	void stop();
+	void delslave();
 	void reset_last_key();
 	void save_status();
 

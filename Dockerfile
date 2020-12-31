@@ -38,7 +38,7 @@ RUN rm -rf /ssdb-master /master.zip && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install Python
-RUN apt-get install -y python
+RUN apt-get -y update && apt-get -y install python
 
 ENV TZ Europe/Amsterdam
 EXPOSE 8888

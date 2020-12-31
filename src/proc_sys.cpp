@@ -275,13 +275,12 @@ int proc_slaveof(NetworkServer *net, Link *link, const Request &req, Response *r
 
 int proc_delslave(NetworkServer *net, Link *link, const Request &req, Response *resp) {
 	SSDBServer *serv = (SSDBServer *)net->data;
-	CHECK_NUM_PARAMS(3);
+	CHECK_NUM_PARAMS(2);
 
-	std::string host = req[2].String();
-	int port = req[3].Int();
+	std::string id = req[2].String();
 
-	serv->delslave(host, port);
-	
+	serv->delslave(id);
+
 	resp->push_back("ok");
 	return 0;
 }

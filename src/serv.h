@@ -41,7 +41,7 @@ public:
 	~SSDBServer();
 	
 	int slaveof(const std::string &id, const std::string &host, int port, const std::string &auth, uint64_t last_seq, const std::string &last_key, bool is_mirror, int recv_timeout);
-	int delslave(const std::string &host, int port);
+	int delslave(const std::string &id);
 
 	int set_kv_range(const std::string &s, const std::string &e);
 	int get_kv_range(std::string *s, std::string *e);

@@ -34,7 +34,6 @@ RUN rm -rf /ssdb-master /master.zip && \
     libtsan0 libubsan1 linux-libc-dev m4 manpages manpages-dev mime-support \
     netbase openssl perl perl-modules-5.28 publicsuffix readline-common xz-utils \
     wget unzip make autoconf g++ && \
-  apt-get autoremove -y && \
   apt-get clean -y && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

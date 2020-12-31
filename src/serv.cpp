@@ -374,12 +374,15 @@ int SSDBServer::slaveof(const std::string &id, const std::string &host, int port
 }
 
 int SSDBServer::delslave(const std::string &id) {
-	log_info("delslave called");
+	log_info("delslave called with id: %s", id.c_str());
 	std::vector<Slave *>::iterator it;
 	for(it = slaves.begin(); it != slaves.end(); it++){
 		Slave *slave = *it;
-		log_info("iterating slave: %s", slave->get_id());
-		if (slave->get_id() == id) {
+		slaveid = slave->get_id().c_str();
+
+		log_info("iterating slave: %s", slaveid);
+		
+		if (slaveid == id.c_str()) {
 			slave->last_seq = 0;
 			slave->last_key = "";
 			slave->save_status();

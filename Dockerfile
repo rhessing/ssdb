@@ -5,7 +5,7 @@ ARG DOWNLOAD_URL="https://github.com/rhessing/ssdb/archive/master.zip"
 
 # Basics
 RUN apt-get -y update && \
-  apt-get install -y wget unzip python make autoconf g++ && \
+  apt-get install -y wget unzip make autoconf g++ && \
   wget --no-check-certificate ${DOWNLOAD_URL} && \
   unzip master && \
   cd ssdb-master && \
@@ -36,6 +36,9 @@ RUN rm -rf /ssdb-master /master.zip && \
     wget unzip make autoconf g++ && \
   apt-get clean -y && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install Python
+RUN apt-get install -y python
 
 ENV TZ Europe/Amsterdam
 EXPOSE 8888

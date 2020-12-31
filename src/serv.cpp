@@ -387,7 +387,7 @@ int SSDBServer::delslave(const std::string &id) {
 			slave->last_key = "";
 			slave->save_status();
 			slave->delslave();
-			slaves.erase(slave);
+			slaves.erase(it);
 			delete slave;
 			log_info("deleted slave: %s", slave->id_.c_str());
 		}

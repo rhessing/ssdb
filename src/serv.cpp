@@ -378,7 +378,7 @@ int SSDBServer::delslave(const std::string &id) {
 	std::vector<Slave *>::iterator it;
 	for(it = slaves.begin(); it != slaves.end(); it++){
 		Slave *slave = *it;
-		slaveid = slave->get_id().c_str();
+		std::string slaveid = slave->get_id().c_str();
 
 		log_info("iterating slave: %s", slaveid);
 		

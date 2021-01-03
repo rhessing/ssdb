@@ -376,7 +376,7 @@ int SSDBServer::slaveof(const std::string &id, const std::string &host, int port
 int SSDBServer::delslave(const std::string &id) {
 	log_info("delslave called with id: %s", id.c_str());
 	std::vector<Slave *>::iterator it;
-	Iterator itselect;
+	std::vector<Slave *>::iterator itselect;
 
 	for(it = slaves.begin(); it != slaves.end(); it++){
 		Slave *slave = *it;

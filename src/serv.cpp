@@ -395,7 +395,10 @@ int SSDBServer::delslave(const std::string &id) {
 		}
 	}
 
-	if ( it != slaves.end() ) slaves.erase(itselect);
+	if ( it != slaves.end() ){
+		slaves.erase(itselect);
+		log_info("Erased slave from vector: %s", id.c_str());
+	} 
 	return 0;
 }
 

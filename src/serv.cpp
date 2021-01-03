@@ -377,6 +377,7 @@ int SSDBServer::delslave(const std::string &id) {
 	log_info("delslave called with id: %s", id.c_str());
 	std::vector<Slave *>::iterator it;
 	std::vector<Slave *>::iterator itselect;
+	bool slavefound = false;
 
 	for(it = slaves.begin(); it != slaves.end(); it++){
 		Slave *slave = *it;
@@ -384,6 +385,7 @@ int SSDBServer::delslave(const std::string &id) {
 		log_info("iterating slave: %s", slave->id_.c_str());
 		
 		if (slave->id_ == id.c_str()) {
+			slavefound = true;
 			itselect = it;
 
 			slave->last_seq = 0;
@@ -395,9 +397,9 @@ int SSDBServer::delslave(const std::string &id) {
 		}
 	}
 
-	if ( it != slaves.end() ){
-		slaves.erase(itselect);
+	if ( slavefound ){
 		log_info("Erased slave from vector: %s", id.c_str());
+		slaves.erase(itselect);
 	} 
 	return 0;
 }
